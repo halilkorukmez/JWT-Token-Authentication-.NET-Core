@@ -13,8 +13,8 @@ namespace Services.AutoMapper.Profiles
     {
         public MappingProfiles()
         {
-            CreateMap<User, User>(); 
-            CreateMap<User, User>();
+           // CreateMap<UserAddDto, User>(); 
+            
         }
     }
 }
