@@ -25,18 +25,13 @@ namespace Services.ProductDataServices
         }
         public string GetToken(User user)
         {
-
             var claims = new Claim[]
             {
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim("id", user.Id.ToString(), ClaimValueTypes.Integer32),
                 new Claim("userCode", user.UserCode),
                 new Claim("name", user.UserName),
-                
-
-
             };
-
 
             var token = new JwtSecurityToken(
                     issuer: _jwtSetting.Issuer,
