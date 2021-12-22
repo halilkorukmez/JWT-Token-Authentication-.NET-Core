@@ -22,7 +22,7 @@ namespace Api.Controllers
 
         [HttpGet]
         [Route("[action]")]
-        public async Task<IActionResult> GetList()
+        public async Task<IActionResult> GetListAsync()
         {
             var result = await _userService.GetListAsync();
             if (result != null)
@@ -32,7 +32,7 @@ namespace Api.Controllers
 
         [HttpGet]
         [Route("[action]")]
-        public async Task<IActionResult> GetById(Guid id)
+        public async Task<IActionResult> GetByIdAsync(Guid id)
         {
             var result = await _userService.GetAsync(id);
             if (result != null)
@@ -42,7 +42,7 @@ namespace Api.Controllers
 
         [HttpGet]
         [Route("[action]")]
-        public async Task<IActionResult> GetByUserName(string username)
+        public async Task<IActionResult> GetByUserNameAsync(string username)
         {
             var result = await _userService.GetByUserNameAsync(username);
             if (result != null)
@@ -64,7 +64,7 @@ namespace Api.Controllers
 
         [HttpPut]
         [Route("[action]")]
-        public async Task<IActionResult> Delete(Guid id)
+        public async Task<IActionResult> DeleteAsync(Guid id)
         {
             var result = await _userService.DeleteAsync(id);
             if (result != null)
