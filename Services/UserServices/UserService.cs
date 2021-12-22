@@ -18,38 +18,54 @@ namespace Services.UserServices
     public class UserService : IUserService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
         private readonly AuthDataContext _dataContext;
-        public UserService(IUnitOfWork unitOfWork, IMapper mapper ,AuthDataContext dataContext)
+        public UserService(IUnitOfWork unitOfWork ,AuthDataContext dataContext)
         {
             _unitOfWork = unitOfWork;
-            _mapper = mapper;
+           
             _dataContext = dataContext;
         }
 
         public async Task<IResult> AddAsync(User user)
         {
-            var product = _mapper.Map<User>(user);
+            if (_dataContext.Users.Any(x => x.UserName == user.UserName))
+                return new Result(ResultStatus.Error, $"{user.UserName} kullanıcı adı daha önceden alınmış");
+
+
             await _unitOfWork.User.AddAsync(user)
                 .ContinueWith(t => _unitOfWork.SaveAsync());
-            return new Result(ResultStatus.Success, $"{user.Name} adlı ürün başarıyla eklenmiştir.");
+            return new Result(ResultStatus.Success, $"{user.Name} adlı kullanıcı başarıyla eklenmiştir.");
         }
 
         public async Task<IResult> DeleteAsync(Guid userId)
         {
-            var product = await _unitOfWork.User.GetAsync(p => p.Id == userId);
-            if (product != null)
+            var user = await _unitOfWork.User.GetAsync(p => p.Id == userId);
+            if (user != null)
             {
-                product.IsActive = false;
-                await _unitOfWork.User.DeleteAsync(product).ContinueWith(t => _unitOfWork.SaveAsync());
-                return new Result(ResultStatus.Success, $"{product.Name} silindi.");
+                user.IsActive = false;
+                await _unitOfWork.User.DeleteAsync(user).ContinueWith(t => _unitOfWork.SaveAsync());
+                return new Result(ResultStatus.Success, $"{user.Name} silindi.");
             }
-            return new Result(ResultStatus.Error, "Kayıtlı Bir Ürün Bulunamadı");
+            return new Result(ResultStatus.Error, "Kayıtlı Bir kullanıcı Bulunamadı");
         }
 
         public async Task<IDataResult<UserDto>> GetAsync(Guid id)
         {
             var user = await _unitOfWork.User.GetAsync(p => p.Id == id);
+            if (user != null)
+            {
+                return new DataResult<UserDto>(ResultStatus.Success, new UserDto
+                {
+                    User = user,
+                    ResultStatus = ResultStatus.Success
+                }); ;
+            }
+            return new DataResult<UserDto>(ResultStatus.Error, "Kayıtlı Bir Ürün Bulunamadı", null);
+        }
+
+        public async Task<IDataResult<UserDto>> GetByUserNameAsync(string username)
+        {
+            var user = await _unitOfWork.User.GetAsync(p => p.UserName == username);
             if (user != null)
             {
                 return new DataResult<UserDto>(ResultStatus.Success, new UserDto
@@ -80,8 +96,7 @@ namespace Services.UserServices
         {
             try
             {
-
-                return await _dataContext.Users.FirstOrDefaultAsync(f => f.UserName == userName && f.Password == password);
+               return await _dataContext.Users.FirstOrDefaultAsync(f => f.UserName == userName && f.Password == password);
             }
             catch (Exception)
             {

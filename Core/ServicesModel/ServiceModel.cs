@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Core.ServicesModel
 {
     public class ServiceModel<T> : IServiceModel<T>
-         where T : class, IEntity, new()
+         where T : class, IEntity
          
     {
         private readonly DbContext _context;
@@ -17,6 +17,7 @@ namespace Core.ServicesModel
         {
             _context = context;
         }
+
         public async Task AddAsync(T entity)
         {
            await _context.Set<T>().AddAsync(entity);
@@ -34,10 +35,10 @@ namespace Core.ServicesModel
 
         public async Task DeleteAsync(T entity)
         {
-            await Task.Run(() => { _context.Set<T>().Update(entity); }); // Manuel Async
+            await Task.Run(() => { _context.Set<T>().Update(entity); }); 
         }
 
-        public async Task<T> GetAsync(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includeProperties)
+        public async Task<T> GetAsync(Expression<Func<T, bool>> predicate)
         {
             IQueryable<T> query = _context.Set<T>();
             if (predicate != null)
@@ -45,18 +46,12 @@ namespace Core.ServicesModel
                 query = query.Where(predicate);
 
             }
-            if (includeProperties.Any())
-            {
-                foreach (var includeProperty in includeProperties)
-                {
-                    query = query.Include(includeProperty);
-                }
-            }
+        
             return await query.SingleOrDefaultAsync();
 
         }
 
-        public async Task<IList<T>> GetListAsync(Expression<Func<T, bool>> predicate = null, params Expression<Func<T, object>>[] includeProperties)
+        public async Task<IList<T>> GetListAsync(Expression<Func<T, bool>> predicate = null)
         {
             IQueryable<T> query = _context.Set<T>();
             if(predicate !=null)
@@ -64,13 +59,7 @@ namespace Core.ServicesModel
                 query = query.Where(predicate);
 
             }
-            if (includeProperties.Any())
-            {
-                foreach (var includeProperty in includeProperties)
-                {
-                    query = query.Include(includeProperty);
-                }
-            }
+       
             return await query.ToListAsync();
         }
 

@@ -16,7 +16,7 @@ namespace Services.ServicesExtensions
     {
         public static IServiceCollection LoadMyServices(this IServiceCollection serviceCollection)
         {
-            serviceCollection.AddDbContext<AuthDataContext>();
+           
             serviceCollection.AddScoped<IUnitOfWork, UnitOfWork>();
             serviceCollection.AddScoped<IUserService, UserService>();
             serviceCollection.AddScoped<IUserDal , EfUserDal>();

@@ -40,6 +40,16 @@ namespace Api.Controllers
             return BadRequest();
         }
 
+        [HttpGet]
+        [Route("[action]")]
+        public async Task<IActionResult> GetByUserName(string username)
+        {
+            var result = await _userService.GetByUserNameAsync(username);
+            if (result != null)
+                return Ok(result);
+            return BadRequest();
+        }
+
         [HttpPost]
         [Route("[action]")]
         public async Task<IActionResult> AddAsync([FromBody]User user)
@@ -62,6 +72,7 @@ namespace Api.Controllers
             return BadRequest();
         }
 
+        
     }
 
 }

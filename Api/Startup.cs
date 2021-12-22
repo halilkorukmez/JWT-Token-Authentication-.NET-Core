@@ -1,14 +1,11 @@
-using AutoMapper;
 using DataAccess.DataContext;
-using DataAccess.Entityframework.Dal.UserDal;
-using DataAccess.UnitOfWork;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using Services.AutoMapper.Profiles;
 using Services.ProductDataService;
 using Services.ProductDataServices;
 using Services.ServicesExtensions;
@@ -29,19 +26,13 @@ namespace Api
         {
 
             services.AddControllers();
-            #region AutoMapper
-
-            var mapperConfig = new MapperConfiguration(mc =>
-            {
-                mc.AddProfile(new MappingProfiles());
-            });
-            var mapper = mapperConfig.CreateMapper();
-            services.AddSingleton(mapper);
-
-            #endregion AutoMapper
+      
             services.LoadMyServices();
             services.Configure<JwtSetting>(Configuration.GetSection("JwtSetting"));
-            services.AddDbContext<AuthDataContext, AuthDataContext>(ServiceLifetime.Transient);
+
+            services.AddDbContextPool<AuthDataContext>(options => options
+               .UseSqlServer(Configuration.GetConnectionString("TestConnectionString"))
+               );
 
 
             services.AddSwaggerGen(c =>

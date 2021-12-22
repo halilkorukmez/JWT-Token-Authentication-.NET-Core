@@ -12,6 +12,7 @@ namespace Services.UserServices
     public interface IUserService
     {
         Task<IDataResult<UserDto>> GetAsync(Guid id);
+        Task<IDataResult<UserDto>> GetByUserNameAsync(string username);
         Task<IDataResult<UserListDto>> GetListAsync();
         Task<IResult> AddAsync(User user);
         Task<IResult> UpdateAsync(User user);
