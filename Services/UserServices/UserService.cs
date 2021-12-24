@@ -30,11 +30,13 @@ namespace Services.UserServices
         {
             if (_dataContext.Users.Any(x => x.UserName == user.UserName))
                 return new Result(ResultStatus.Error, $"{user.UserName} kullanıcı adı daha önceden alınmış");
-
-
-            await _unitOfWork.User.AddAsync(user)
-                .ContinueWith(t => _unitOfWork.SaveAsync());
-            return new Result(ResultStatus.Success, $"{user.Name} adlı kullanıcı başarıyla eklenmiştir.");
+           
+            else
+                await _unitOfWork.User.AddAsync(user)
+                    .ContinueWith(t => _unitOfWork.SaveAsync());
+                return new Result(ResultStatus.Success, $"{user.Name} adlı kullanıcı başarıyla eklenmiştir.");
+            
+           
         }
 
         public async Task<IResult> DeleteAsync(Guid userId)
